@@ -23,10 +23,28 @@ This package currently supports logging at the following levels.  These levels a
 - Notice - notice
 - Warning - warning
 
+These can be used in the following manner:
+```
+logger := log.Logger{}
+logger.Info("Info log message.", "key", "value")
+```
+
 ## Log Formats
 This package provides `Formatters` capable of structuring logs in the following formats.
 - JSON - default
 - logfmt
+
+By default, messages are formatted using the JSON Formatter.  If you require another format, it is easy to provide a formatter to your logger as follows.
+```
+logger := log.Logger{Formatter: logger.LogfmtFormatter{}}
+```
+
+## Log Output
+By default, this package will log to `os.Stdout`.  If you would prefer, output can be written to an alternate `io.Writer`.  The following example shows how you would set up a logger to write to a bytes buffer.
+```
+buffer := &bytes.Buffer{}
+logger := log.Logger{Writer: buffer}
+```
 
 ## Context
 Each logger has a series of key-value pairs that make up it's context.  If values exist in the logger's context, these values will be present in the log output.  A key-value pair can be added to a logger's context as follows:
