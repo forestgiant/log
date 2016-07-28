@@ -49,7 +49,7 @@ func (f JSONFormatter) Format(writer io.Writer, keyvals ...interface{}) error {
 	return err
 }
 
-// LogfmtFormatter implements the LogFormatter interface for logfmt outpiut
+// LogfmtFormatter implements the LogFormatter interface for Logfmt outpiut
 type LogfmtFormatter struct{}
 
 // Format will write the provided key-value pairs to the specified io.Writer in Logfmt format
