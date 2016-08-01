@@ -46,7 +46,7 @@ func TestLog(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		err := test.logger.Log(key, value)
+		err := test.logger.log(key, value)
 		if err != nil {
 			t.Error(err)
 			return

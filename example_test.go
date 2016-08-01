@@ -72,12 +72,6 @@ func ExampleLogger_Info() {
 	//Output: {"key":"value","level":"info","msg":"Info level log message"}
 }
 
-func ExampleLogger_Log() {
-	logger := Logger{}
-	logger.Log("key", "value")
-	//Output: {"key":"value"}
-}
-
 func ExampleLogger_Notice() {
 	logger := Logger{}
 	logger.Notice("Notice level log message", "key", "value")
