@@ -3,6 +3,7 @@ package log
 import (
 	"io"
 	"os"
+	"sync"
 )
 
 // Logger implements the Logger interface as well as some helper methods for leveled logging.
@@ -10,26 +11,30 @@ type Logger struct {
 	Writer    io.Writer
 	Formatter Formatter
 	context   []interface{}
+	logMutex  sync.Mutex
 }
 
 // Log the provided key value pairs
 func (l *Logger) log(keyvals ...interface{}) error {
-	var writer io.Writer
-	var formatter Formatter
+	l.logMutex.Lock()
+	defer l.logMutex.Unlock()
 
+	var writer io.Writer
 	if l.Writer == nil {
 		writer = os.Stdout
 	} else {
 		writer = l.Writer
 	}
 
+	var formatter Formatter
 	if l.Formatter == nil {
 		formatter = JSONFormatter{}
 	} else {
 		formatter = l.Formatter
 	}
 
-	return formatter.Format(writer, append(l.context, keyvals...)...)
+	var err = formatter.Format(writer, append(l.context, keyvals...)...)
+	return err
 }
 
 // With returns a copy of the logger with the provided key-value pairs to the backing context

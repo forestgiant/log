@@ -12,10 +12,11 @@ func TestLog(t *testing.T) {
 	var buffer = &bytes.Buffer{}
 	var key = "key"
 	var value = "value"
+	var message = "test message"
 	var contextKey = "context"
 	var contextValue = "present"
 
-	var validateJSONLogger = func(b []byte) error {
+	var validateJSONLogger = func(b []byte, message string, key string, value string) error {
 		var object map[string]interface{}
 		if err := json.Unmarshal(b, &object); err != nil {
 			return err
@@ -32,13 +33,16 @@ func TestLog(t *testing.T) {
 		return nil
 	}
 
-	var validateLogfmtLogger = func(b []byte) error {
+	var validateLogfmtLogger = func(b []byte, message string, key string, value string) error {
+		if string(b) != fmt.Sprintf("%s=%s msg=\"%s\" %s=%s\n", contextKey, contextValue, message, key, value) {
+			return errors.New("ValueGenerator was not properly evaluated for LogfmtFormatter." + string(b))
+		}
 		return nil
 	}
 
 	var tests = []struct {
 		logger    Logger
-		validator func([]byte) error
+		validator func(b []byte, message string, key string, value string) error
 	}{
 		{Logger{Writer: buffer}.With(contextKey, contextValue), validateJSONLogger},
 		{Logger{Writer: buffer, Formatter: JSONFormatter{}}.With(contextKey, contextValue), validateJSONLogger},
@@ -46,18 +50,37 @@ func TestLog(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		err := test.logger.log(key, value)
+		err := test.logger.log("msg", message, key, value)
 		if err != nil {
 			t.Error(err)
 			return
 		}
 
-		if err = test.validator(buffer.Bytes()); err != nil {
+		if err = test.validator(buffer.Bytes(), message, key, value); err != nil {
 			t.Error(err)
 			return
 		}
 
 		buffer.Reset()
+	}
+}
+
+func TestConcurrentLogUsage(t *testing.T) {
+	var buffer = &bytes.Buffer{}
+	var logger = Logger{Writer: buffer}
+
+	var key = "key"
+	var value = "value"
+	var message = "test message"
+
+	for i := 0; i < 100; i++ {
+		go func() {
+			err := logger.log("msg", message, key, value)
+			if err != nil {
+				t.Error(err)
+				return
+			}
+		}()
 	}
 }
 
