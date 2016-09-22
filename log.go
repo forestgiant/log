@@ -11,11 +11,15 @@ type Logger struct {
 	Writer    io.Writer
 	Formatter Formatter
 	context   []interface{}
-	logMutex  sync.Mutex
+	logMutex  *sync.Mutex
 }
 
 // Log the provided key value pairs
 func (l *Logger) log(keyvals ...interface{}) error {
+	if l.logMutex == nil {
+		l.logMutex = new(sync.Mutex)
+	}
+
 	l.logMutex.Lock()
 	defer l.logMutex.Unlock()
 
