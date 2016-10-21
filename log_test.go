@@ -155,3 +155,38 @@ func TestLevels(t *testing.T) {
 		}
 	}
 }
+
+type logFunc func(string, ...interface{}) error
+
+func TestIgnoreLevels(t *testing.T) {
+	var buffer = &bytes.Buffer{}
+	var logger = Logger{Writer: buffer, FilterLevel: 0}
+
+	for filter := 0; filter < 8; filter++ {
+		logger.FilterLevel = filter
+
+		var functions = []logFunc{
+			logger.Emergency,
+			logger.Alert,
+			logger.Critical,
+			logger.Error,
+			logger.Warning,
+			logger.Notice,
+			logger.Info,
+			logger.Debug,
+		}
+
+		for findex, f := range functions {
+			err := f("test message", "key", "value")
+
+			if findex == 0 && err == nil {
+				continue
+			}
+
+			if err != ErrIgnoredLogLevel && logger.FilterLevel > 7-findex {
+				t.Errorf("Failed to ignore log at level %d when filter level is set to %d.", findex, logger.FilterLevel)
+				continue
+			}
+		}
+	}
+}
