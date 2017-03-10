@@ -23,11 +23,11 @@ func TestLog(t *testing.T) {
 		}
 
 		if object[key] != value {
-			return fmt.Errorf("Failed to properly log value for key %s. Expected %s but received %s.", key, value, object[key])
+			return fmt.Errorf("Failed to properly log value for key %s. Expected %s but received %s", key, value, object[key])
 		}
 
 		if object[contextKey] != contextValue {
-			return fmt.Errorf("Failed to properly log value for key %s. Expected %s but received %s.", contextKey, contextValue, object[contextKey])
+			return fmt.Errorf("Failed to properly log value for key %s. Expected %s but received %s", contextKey, contextValue, object[contextKey])
 		}
 
 		return nil
@@ -35,7 +35,7 @@ func TestLog(t *testing.T) {
 
 	var validateLogfmtLogger = func(b []byte, message string, key string, value string) error {
 		if string(b) != fmt.Sprintf("%s=%s msg=\"%s\" %s=%s\n", contextKey, contextValue, message, key, value) {
-			return errors.New("ValueGenerator was not properly evaluated for LogfmtFormatter." + string(b))
+			return errors.New("ValueGenerator was not properly evaluated for LogfmtFormatter")
 		}
 		return nil
 	}
@@ -97,15 +97,15 @@ func TestLevels(t *testing.T) {
 		}
 
 		if object[key] != value {
-			return fmt.Errorf("Failed to properly log value for key %s. Expected %s but received %s.", key, value, object[key])
+			return fmt.Errorf("Expected logged value %s for key %s, but received %s", value, key, object[key])
 		}
 
 		if object["level"] != level {
-			return fmt.Errorf("Failed to properly log value for key %s. Expected %s but received %s.", "level", level, object["level"])
+			return fmt.Errorf("Expected logged value %s for key %s, but received %s", level, "level", object["level"])
 		}
 
 		if object["msg"] != message {
-			return fmt.Errorf("Failed to properly log value for key %s. Expected %s but received %s.", "msg", level, object["msg"])
+			return fmt.Errorf("Expected logged value %s for key %s, but received %s", level, "msg", object["msg"])
 		}
 
 		return nil
@@ -113,7 +113,7 @@ func TestLevels(t *testing.T) {
 
 	var validateLogfmtLogger = func(b []byte, level string, message string, key string, value string) error {
 		if string(b) != fmt.Sprintf("level=%s msg=\"%s\" %s=%s\n", level, message, key, value) {
-			return errors.New("ValueGenerator was not properly evaluated for LogfmtFormatter." + string(b))
+			return errors.New("ValueGenerator was not properly evaluated for LogfmtFormatter")
 		}
 		return nil
 	}
@@ -184,7 +184,7 @@ func TestIgnoreLevels(t *testing.T) {
 			}
 
 			if err != ErrIgnoredLogLevel && logger.FilterLevel > 7-findex {
-				t.Errorf("Failed to ignore log at level %d when filter level is set to %d.", findex, logger.FilterLevel)
+				t.Errorf("Failed to ignore log at level %d when filter level is set to %d", findex, logger.FilterLevel)
 				continue
 			}
 		}

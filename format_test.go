@@ -25,7 +25,7 @@ func TestUnevenArguments(t *testing.T) {
 		}
 
 		if w.String() != test.expected {
-			t.Error("Failed to ignore key without a corresponding value.")
+			t.Error("Failed to ignore key without a corresponding value")
 		}
 
 		w.Reset()
@@ -74,7 +74,7 @@ func TestValueGenerator(t *testing.T) {
 		}
 
 		if object[key] != value {
-			return errors.New("ValueGenerator was not properly evaluated for JSONFormatter.")
+			return errors.New("ValueGenerator was not properly evaluated for JSONFormatter")
 		}
 
 		return nil
@@ -82,7 +82,7 @@ func TestValueGenerator(t *testing.T) {
 
 	var validateLogfmt = func(b []byte) error {
 		if string(b) != fmt.Sprintf("%s=%s\n", key, value) {
-			return errors.New("ValueGenerator was not properly evaluated for LogfmtFormatter.")
+			return errors.New("ValueGenerator was not properly evaluated for LogfmtFormatter")
 		}
 		return nil
 	}
